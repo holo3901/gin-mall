@@ -18,7 +18,7 @@ mysql:
   host: "127.0.0.1"
   port: 3306
   user: "root"
-  password: "miku1314"
+  password: "root1234"
   dbname: "go-mall"
   max_open_conns: 200
   max_idle_conns: 50
@@ -31,13 +31,13 @@ redis:
   pool_size: 100
 
 qiniu:
-  access_key: zMUN0pBLWwekzPpwzEnMAoB1nhfNvIRWLxLTlgln
-  serect_key: O5qtXbOypouarVBzeiRJSuHjzoM_OURRrPk-tSps
-  bucket: clinx
-  qiniuServe: hn-bkt-clouddn-com-idvcz9d.www.qiniudns.com
+  access_key: 
+  serect_key: 
+  bucket: 
+  qiniuServe: 
 
 email:
   valid_email: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
-  smtp_host: smtp.qq.com
-  smtp_email: 2777526488@qq.com
-  smtp_pass: tcohyrbwmyrodfij
+  smtp_host: 
+  smtp_email: 
+  smtp_pass: 
