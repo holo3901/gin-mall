@@ -51,7 +51,7 @@ func Login(user *models.User) (a *models.User, err error) {
 }
 
 func UserUpDate(username int64, user *models.User) error {
-	err := dbs.Model(&models.User{}).Where("id?", username).Updates(&user).Error
+	err := dbs.Model(&models.User{}).Where("id=?", username).Updates(&user).Error
 	if err != nil {
 		return err
 	}

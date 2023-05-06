@@ -87,6 +87,7 @@ func AddProduct(ctx *gin.Context) {
 	if err = ctx.ShouldBind(p); err != nil {
 		zap.L().Error("AddProduct invalid param", zap.Error(err))
 		err, ok := err.(validator.ValidationErrors)
+
 		if !ok {
 			ResponseError(ctx, CodeInvalidParam)
 			return
@@ -104,6 +105,7 @@ func AddProduct(ctx *gin.Context) {
 		ResponseError(ctx, CodeInvalidParam)
 		return
 	}
+
 	ResponseSuccess(ctx, gin.H{
 		"info": "创建成功",
 	})

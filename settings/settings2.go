@@ -62,9 +62,9 @@ type EmailConfig struct {
 
 type QiMiuConfig struct {
 	AccessKey  string `mapstructure:"access_key"`
-	SerectKey  string `mapstructure:"screct_key"`
+	SerectKey  string `mapstructure:"serect_key"`
 	Bucket     string `mapstructure:"bucket"`
-	QiniuServe string `mapstructure:"qiniu_serve"`
+	QiniuServe string `mapstructure:"qiniuserve"`
 }
 
 func Init() (err error) {

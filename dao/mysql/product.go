@@ -34,6 +34,10 @@ func SearchProduct(p *models.ParamProduct) (products []*models.Product, err erro
 	return
 }
 
+func CreateProductImg(p *models.ProductImg) error {
+	err := dbs.Model(&models.ProductImg{}).Create(&p).Error
+	return err
+}
 func ListProductImg(p int) (img []*models.ProductImg, err error) {
 	err = dbs.Model(&models.ProductImg{}).Where("id=?", p).Find(&img).Error
 	return

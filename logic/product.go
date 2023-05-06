@@ -4,8 +4,10 @@ import (
 	"clms/dao/mysql"
 	"clms/dao/redis"
 	"clms/models"
+	"fmt"
 	"go.uber.org/zap"
 	"mime/multipart"
+	"sync"
 	"time"
 )
 
@@ -46,6 +48,7 @@ func ListProductImg(id int64) ([]*models.ProductImg, error) {
 }
 
 func CreateProduct(p *models.ParamProductService, file []*multipart.FileHeader, username int64) error {
+	fmt.Println(username, file)
 
 	boss, _ := mysql.GetUserByIds(uint(username))
 	tmp, _ := file[0].Open()
@@ -71,6 +74,26 @@ func CreateProduct(p *models.ParamProductService, file []*multipart.FileHeader, 
 	if err != nil {
 		return err
 	}
+
+	wg := new(sync.WaitGroup)
+	wg.Add(len(file))
+	for _, v := range file {
+		tmp, _ = v.Open()
+		path, err = UploadToQiNiu(tmp, v.Size)
+		if err != nil {
+			return err
+		}
+		p := &models.ProductImg{
+			ProductID: product.ID,
+			ImgPath:   path,
+		}
+		err = mysql.CreateProductImg(p)
+		if err != nil {
+			return err
+		}
+		wg.Done()
+	}
+	wg.Wait()
 	err = redis.CreateProductOrder(int64(product.CategoryID), int64(product.ID))
 	if err != nil {
 		return err

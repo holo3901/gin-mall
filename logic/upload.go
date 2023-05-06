@@ -3,13 +3,15 @@ package logic
 import (
 	"clms/settings"
 	"context"
+	"fmt"
+	"mime/multipart"
+
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
-	"mime/multipart"
 )
 
 func UploadToQiNiu(file multipart.File, fileSize int64) (path string, err error) {
-	a := settings.QiMiuConfig{}
+	a := settings.Conf.QiMiuConfig
 	var AccessKey = a.AccessKey
 	var SerectKey = a.SerectKey
 	var Bucket = a.Bucket
@@ -17,6 +19,7 @@ func UploadToQiNiu(file multipart.File, fileSize int64) (path string, err error)
 	putPlicy := storage.PutPolicy{
 		Scope: Bucket,
 	}
+	fmt.Println(a)
 	mac := qbox.NewMac(AccessKey, SerectKey)
 	upToken := putPlicy.UploadToken(mac)
 	cfg := storage.Config{
@@ -29,8 +32,10 @@ func UploadToQiNiu(file multipart.File, fileSize int64) (path string, err error)
 	ret := storage.PutRet{}
 	err = formUploader.PutWithoutKey(context.Background(), &ret, upToken, file, fileSize, &putExtra)
 	if err != nil {
+        fmt.Println(err)
 		return "", err
 	}
 	url := ImgUrl + ret.Key
 	return url, nil
 }
+

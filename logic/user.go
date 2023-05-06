@@ -89,36 +89,6 @@ func UserUpdate(user *models.ParamUpdateUser, username int64) (token string, err
 	return
 }
 
-func UserValid(valid *models.ParamUserValid) error {
-	info, err := JWT.ParseEmailToken(valid.Token)
-	if err != nil {
-		return err
-	}
-	users, err := mysql.GetUserByIds(uint(info.UserName))
-
-	if info.OperationType == 1 {
-		users.Email = info.Email
-		err = mysql.UserUpDate(info.UserName, users)
-		if err != nil {
-			return err
-		}
-	} else if info.OperationType == 2 {
-		users.Email = ""
-		err = mysql.UserUpDate(info.UserName, users)
-		if err != nil {
-			return err
-		}
-	} else {
-		users.PasswordDigest = info.Password
-		err = mysql.UserUpDate(info.UserName, users)
-		if err != nil {
-			return err
-		}
-
-	}
-	return nil
-}
-
 func Post(file multipart.File, fileSize int64, username int64) error {
 	path, err := UploadToQiNiu(file, fileSize)
 	if err != nil {
@@ -130,6 +100,57 @@ func Post(file multipart.File, fileSize int64, username int64) error {
 	}
 	user.Avatar = path
 	err = mysql.UserUpDate(username, user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func SendEmail(l *models.ParamSend, id int64) error {
+	conf := settings.Conf.EmailConfig
+	token, err := JWT.GenerateEmailToken(id, l.OperationType, l.Email, l.Password)
+	if err != nil {
+		return err
+	}
+	notice, err := mysql.GetNoticeByIds(l.OperationType)
+	if err != nil {
+		return err
+	}
+	address := conf.ValidEmail + token
+	mailStr := notice.Text
+	mailText := strings.Replace(mailStr, "Email", address, -1)
+	mailText = strings.Replace(mailStr, "token", token, -1)
+	m := mail.NewMessage()
+	m.SetHeader("From", conf.SmtpEmail)
+	m.SetHeader("To", l.Email)
+	m.SetHeader("Subject", "FanOne")
+
+	m.SetBody("text/html", mailText)
+	d := mail.NewDialer(conf.SmtpHost, 25, conf.SmtpEmail, conf.SmtpPass)
+	d.StartTLSPolicy = mail.MandatoryStartTLS
+	if err = d.DialAndSend(m); err != nil {
+		return err
+	}
+	return nil
+}
+
+func ValidEmail(l *models.ParamValid) error {
+	emailinfo, err := JWT.ParseEmailToken(l.Token)
+	if err != nil {
+		return err
+	}
+	ids, err := mysql.GetUserByIds(uint(emailinfo.UserName))
+	if err != nil {
+		return err
+	}
+	if emailinfo.OperationType == 1 {
+		ids.Email = emailinfo.Email
+	} else if emailinfo.OperationType == 2 {
+		ids.Email = ""
+	} else {
+		return err
+	}
+	err = mysql.UserUpDate(int64(ids.ID), ids)
 	if err != nil {
 		return err
 	}

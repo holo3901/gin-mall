@@ -103,27 +103,51 @@ func UserUpdate(ctx *gin.Context) {
 	ResponseSuccess(ctx, token)
 }
 
-func UserValid(ctx *gin.Context) {
-	p := new(models.ParamUserValid)
-	if err := ctx.ShouldBindJSON(p); err != nil {
-		zap.L().Error("ParamUserValid with invalid param", zap.Error(err))
+func SendEmail(ctx *gin.Context) {
+	l := new(models.ParamSend)
+	if err := ctx.ShouldBind(l); err != nil {
+		zap.L().Error("sendEmail with invalid param", zap.Error(err))
 		errs, ok := err.(validator.ValidationErrors)
 		if !ok {
 			ResponseError(ctx, CodeInvalidParam)
 			return
 		}
-		ResponseErrorWithMsg(ctx, CodeInvalidParam, removeTopStruct(errs.Translate(trans)))
+		ResponseErrorWithMsg(ctx, CodeInvalidParam, errs.Translate(trans))
 		return
 	}
-	err := logic.UserValid(p)
+	id, err := GetCurrentUserID(ctx)
 	if err != nil {
+		ResponseError(ctx, CodeInvalidToken)
 		return
 	}
-	ResponseSuccess(ctx, gin.H{
-		"info": "验证邮箱成功",
-	})
+	err = logic.SendEmail(l, id)
+	if err != nil {
+		ResponseError(ctx, CodeServerBusy)
+		return
+	}
+	ResponseSuccess(ctx, "success")
 }
 
+func ValidEmail(ctx *gin.Context) {
+	l := new(models.ParamValid)
+	if err := ctx.ShouldBind(l); err != nil {
+		zap.L().Error("validEmail with invalid param", zap.Error(err))
+		errs, ok := err.(validator.ValidationErrors)
+		if !ok {
+			ResponseError(ctx, CodeInvalidParam)
+			return
+		}
+		ResponseErrorWithMsg(ctx, CodeInvalidParam, errs.Translate(trans))
+		return
+	}
+	err := logic.ValidEmail(l)
+	if err != nil {
+		ResponseError(ctx, CodeServerBusy)
+		return
+	}
+	ResponseSuccess(ctx, "success")
+
+}
 func UpLoadAvatar(ctx *gin.Context) {
 	file, fileHeader, err := ctx.Request.FormFile("file")
 	if err != nil {

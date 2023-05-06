@@ -26,11 +26,6 @@ type ParamUpdateUser struct {
 	OperationType uint `form:"operation_type" json:"operation_type"`
 }
 
-type ParamUserValid struct {
-	Email string `form:"email" json:"email"`
-	Token string `form:"token" json:"token" binding:"required"`
-}
-
 type ParamProductService struct {
 	Name          string `form:"name" json:"name"`
 	CategoryID    int    `form:"category_id" json:"category_id"`
@@ -64,4 +59,14 @@ type ParamCarts struct {
 	ProductID uint `form:"product_id" json:"product_id"`
 	BossID    uint `form:"boss_id" json:"boss_id"`
 	Num       uint `form:"num" json:"num"`
+}
+type ParamSend struct {
+	Email    string `form:"email" json:"email"`
+	Password string `form:"password" json:"password"`
+	// OpertionType 1:绑定邮箱 2：解绑邮箱
+	OperationType uint `form:"operation_type" json:"operation_type" binding:"oneof=1 2""`
+}
+
+type ParamValid struct {
+	Token string `form:"token" json:"token"`
 }

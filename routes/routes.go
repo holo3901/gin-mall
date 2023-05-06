@@ -44,9 +44,10 @@ func SetUp(mode string) *gin.Engine {
 		{
 
 			// 用户操作
-			v1.PUT("user", controllers.UserUpdate)             //改名,发邮箱
-			v1.POST("user/valid-email", controllers.UserValid) //接收邮箱，并进行修改
-			v1.POST("avatar", controllers.UpLoadAvatar)        //上传头像
+			v1.PUT("user", controllers.UserUpdate) //改名,发邮箱
+			v1.POST("user/sending-email", controllers.SendEmail)
+			v1.POST("user/valid-email", controllers.ValidEmail)
+			v1.POST("avatar", controllers.UpLoadAvatar) //上传头像
 
 			// 商品操作
 			v1.POST("product", controllers.AddProduct)

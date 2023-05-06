@@ -23,12 +23,6 @@ mysql:
   max_open_conns: 200
   max_idle_conns: 50
 
-email:
-  ValidEmail: http://localhost:8080/#/vaild/email/
-  SmtpHost : smtp.qq.com
-  SmtpEmail:
-  SmtpPass:
-
 redis:
   host: "127.0.0.1"
   port: 6379
@@ -37,7 +31,13 @@ redis:
   pool_size: 100
 
 qiniu:
-  AccessKey:
-  SerectKey:
-  Bucket:
-  QiniuServe:
+  access_key: zMUN0pBLWwekzPpwzEnMAoB1nhfNvIRWLxLTlgln
+  serect_key: O5qtXbOypouarVBzeiRJSuHjzoM_OURRrPk-tSps
+  bucket: clinx
+  qiniuServe: hn-bkt-clouddn-com-idvcz9d.www.qiniudns.com
+
+email:
+  valid_email: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$
+  smtp_host: smtp.qq.com
+  smtp_email: 2777526488@qq.com
+  smtp_pass: tcohyrbwmyrodfij
